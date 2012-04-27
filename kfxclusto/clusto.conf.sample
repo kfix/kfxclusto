@@ -1,0 +1,3 @@
+[clusto]
+site_paths = /var/lib/custom_libs
+site_imports = custom_clusto1

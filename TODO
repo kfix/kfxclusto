@@ -1,0 +1,34 @@
+I would like to write a clusto webapp that lets you select/search a datacenter and arack and shows a rack as a bunch of CSS# boxes. I'd like the CSS markup to stored as decorators for the clusto drivers themselves. the drawn object would be clickable to show more information on each one
+
+CSS layouting
+http://www.vaniawebdesign.com/Wp/2010/06/pure-css-3-grid-image-gallery/
+http://www.2ality.com/2011/01/ultimate-css-layout-spec-for-webapps.html
+until CSS grids are up-to-snuff, clickable SVG could be used instead
+  http://www.micahcarrick.com/django-dynamically-generated-image.html
+  http://www.stuartaxon.com/2010/02/03/using-cairo-to-generate-svg-in-django/
+  http://www.ibm.com/developerworks/library/x-svgclientside/
+
+I'm thinking that we'll use python to interrogate a driver's parent classes until we find one with a webapp/css decorator that can be used to render the CSS. the decorator will take things like _ports and run with making little sub-boxes for the ports. dunnon how to handle cable connections since those aren't entities in-and-of themselves.
+
+https://github.com/clusto/clusto/blob/master/contrib/clustohttp.py
+
+nevow (dead) is the closest thing i found to an mvc that renders objects to the web. god, what a shitpile
+http://book.opensourceproject.org.cn/lamp/python/pythoncook2/opensource/0596007973/pythoncook2-chp-14-sect-14.html
+http://code.activestate.com/recipes/286260-rendering-arbitrary-objects-with-nevow/
+http://www.java2s.com/Open-Source/Python/Web-Frameworks/Nevow/Nevow-0.10.0/examples/irenderer/irenderer.py.htm
+  notice the ISummaryView and IFullView dichtomy, could use that make separate CSS and HTML decorators for each driver
+
+views
+---
+
+toplevel page, shows a collapsed/paginated view of all entities (by name) and all driver types (locations, devices, etc..)
+
+driver page
+  shows zoomed in list of all entities in driver's type
+
+rack page
+  templates will draw all child devices as CSS rectangles
+
+server page
+  templates will draw server and lines to off-screen far-end entities for cable connections
+    JS will render select-box list for (un)allocated ports, use type-in lucene/solr search-as-type to complete connections to far-end entity and port #

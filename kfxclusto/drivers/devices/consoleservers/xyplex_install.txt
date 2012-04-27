@@ -1,0 +1,97 @@
+My quick start instructions for configuring an old (& cheap) Xyplex MaxServer. Adapted from:
+   http://www.pimpworks.org/xyplex/
+   http://www.gno.org/~gdr/xyplex/ (lots of documentation)
+   http://service.mrv.com/support/tech_docs/8/733 (more documentation)
+   http://google.com/search?q=cache:a5iUaXT0y3MJ:www.pimpworks.org/xyplex/maxserver-getting-started.pdf
+   http://loreley.flyingparchment.org.uk/pages/xyplex 
+   http://service.mrv.com/downloads/view.cfm?tp=as_cabling.cfm&print=no
+
+factory reset
+    power on, wait for full boot and press reset button with paper clip. All serial lights will illuminate. Press and hold reset.  When lights 14,15,16 light in a group, release reset.
+    when run light flashes rapidly, hook serial terminal to any port and press enter a few times. When you recieve "Configuration in progress, please wait.", type in 'ACCESS' and hit return.
+    sequence 3,y,enter,s,enter,y,enter will set factory defaults.
+
+    on reboot, hit enter when run light is solid for prompt. default user+pass is "ACCESS"
+    reconfig: http://www.pimpworks.org/xyplex/xyplex.html
+
+get enabled:
+     set privilege
+     (pass is "SYSTEM")
+
+see whats up:
+     show parameter server
+     show ip
+
+stop the set(running-config)/def(startup-config) dichtomy and set both simultaneously (using only def):
+     set server change enable
+
+PROTIP: set GNU Screen's "slowpaste 20" and paste from its buffer
+
+Set the time manually during implementation
+     def SERVER DATE dd mmm yyyy
+     def SERVER TIME hh:mm:ss
+   
+Set the login password (Default=ACCESS)
+     def SERVER LOGIN PASSWORD "foobar"
+   
+Set the maintenance password (Default=SYSTEM)
+     def SERVER MAINTENANCE PASSWORD "foobar"
+
+Set the maintenance password. (Default=SYSTEM)
+     def SERVER PRIVILEGED PASSWORD "foobar"
+
+configure ip
+     def server internet address 192.168.1.5
+     def server internet subnet mask 255.255.255.0
+     def server internet primary  gateway address 192.168.1.1
+     def server internet secondary gateway address 192.168.1.1
+
+configure prompts
+     def server identification "csm1.phx1"
+     def server welcome "For Authorized Use Only!"
+     def server name csm1.phx1
+     def prompt "csm1.phx1"
+
+set up admin port and console ports (look at the configuration refence manual):
+     define port 1 telnet echo mode disable
+     define port 1 access local
+
+     define port 2-40 telnet echo mode character
+     define port 2-40 access remote
+     define port 2-40 dtrwait forconnection
+     define port 2-40 break disabled
+     define port 2-40 dedicated none
+     logout port 2-40
+
+     define port all telnet transmit immediate
+     define port all telnet newline nothing
+     define port all telnet binary session mode passall
+     define port all default session mode passall
+     define port all telnet newline filtering cr
+     define port all broadcast disable
+     define port all speed 9600
+     define port all autobaud disable
+     define port all modem disable
+     define port all dsrlogout disable
+     define port all dsrwait disable
+     define port all flow control disable
+     define port all flow disable
+     define port all typeahead 16348
+     define port all autoprompt disabled
+     define port all line editor disabled
+     define port all verification disabled
+
+to remotely log in to the admin port:
+     telnet csm1.blah 2000
+     (type enter - you will get a '#' prompt)
+     (type access - you will get a normal login prompt)
+     login as normal
+   
+to remotely log in to a console port:
+     telnet csm1.blah (2000 + 100 * port#)
+     you should have a console - don't know how to wrap this with a login yet
+
+to kick a user:
+     set privilege
+     show users
+     logout port 40 (or whatever)
